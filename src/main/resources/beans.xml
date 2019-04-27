@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+          http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context-3.1.xsd
+          http://www.springframework.org/schema/aop
+          http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+          http://www.springframework.org/schema/tx
+          http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+          http://www.springframework.org/schema/cache
+          http://www.springframework.org/schema/cache/spring-cache-3.1.xsd
+          http://www.springframework.org/schema/data/jpa
+          http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+
+    <!-- 1.配置dataSources -->
+<!--    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
+<!--        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>-->
+<!--        <property name="username" value="root"/>-->
+<!--        <property name="password" value="123456"/>-->
+<!--        <property name="url" value="jdbc:mysql://localhost:3306/springdata_test"/>-->
+<!--    </bean>-->
+    <!-- PropertyPlaceholderConfigurer类中有个locations属性，接收的是一个数组，即我们可以在下面配好多个properties文件 -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <array>
+                <value>classpath:db.properties</value>
+            </array>
+        </property>
+    </bean>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driverClass}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.user}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+
+    <!-- 2.Jpa配置(EntityManageFactory), LocalContainerEntityManagerFactoryBean这个选项Spring扮演了容器的角色。完全掌管JPA -->
+    <bean id="entityManageFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 指定Jpa持久化实现厂商类,这里以Hibernate为例 -->
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+        </property>
+        <!-- 指定Entity实体类包路径 -->
+        <property name="packagesToScan">
+            <array>
+                <value>com.bigfish</value>
+            </array>
+        </property>
+
+        <!-- 指定JPA属性；如Hibernate中指定是否显示SQL的是否显示、方言等 -->
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+                <!-- log打出生成的sql -->
+                <prop key="hibernate.show_sql">true</prop>
+                <!-- 格式化log中生成的sql -->
+                <prop key="hibernate.format_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- 3.配置事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManageFactory"/>
+    </bean>
+
+    <!-- 4.配置支持事务注解 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!-- 5.配置springdata扫描的包 -->
+    <jpa:repositories base-package="com.bigfish" entity-manager-factory-ref="entityManageFactory"/>
+
+    <!-- 组件全局扫描 -->
+    <context:component-scan base-package="com.bigfish"/>
+
+</beans>
