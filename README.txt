@@ -76,3 +76,23 @@ Repository的子接口
     CrudRepository：继承Repository, 实现了CRUD相关的方法
     PagingAndSortingRepository：继承CrudRepository, 实现了分页排序相关的方法
     JpaRepository：继承PagingAndSortingRepository, 实现JPA规范相关的方法
+
+
+spring data jpa、jpa规范、hibernate三者的关系:
+
+    java代码 ---> spring data jpa
+                           |
+                           |
+                           |
+                           V
+                         jpa规范
+                            |
+                            |
+                            |
+                            V           封装jdbc操作
+                        hibernate -------------------
+                                                    |
+                                                    |
+                                                    |
+                                                    V
+                                                  数据库
