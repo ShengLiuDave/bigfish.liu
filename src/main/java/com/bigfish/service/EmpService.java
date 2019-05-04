@@ -1,10 +1,13 @@
 package com.bigfish.service;
 
+import com.bigfish.domain.Emp;
+import com.bigfish.repository.EmpCrudRepository;
 import com.bigfish.repository.EmpRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import java.util.List;
 
 
 /**
@@ -24,14 +27,21 @@ import javax.transaction.Transactional;
 @Service
 public class EmpService {
 
-    @Autowired
+    @Resource
     private EmpRepository empRepository;
 
-    @Transactional
+    @Resource
+    private EmpCrudRepository empCrudRepository;
+
+    @Transactional(rollbackOn = Exception.class)
     public void update(Integer id, Integer age) {
         empRepository.update(id, age);
     }
 
+    @Transactional(rollbackOn = Exception.class)
+    public void save(List<Emp> emps) {
+        empCrudRepository.saveAll(emps);
+    }
 
 }
     

@@ -2,6 +2,7 @@ package com.bigfish.EmpRepository;
 
 import com.bigfish.domain.Emp;
 import com.bigfish.repository.EmpRepository;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -33,9 +34,10 @@ public class EmpRepositoryTest {
     public void setup(){
         ctx = new ClassPathXmlApplicationContext("beans.xml");
         empRepository = ctx.getBean(EmpRepository.class);
-        System.out.printf("setup");
+        System.out.println("setup");
     }
 
+    @After
     public void tearDown(){
         ctx = null;
         System.out.println("tearDown");

@@ -74,9 +74,23 @@
 
 Repository的子接口
     CrudRepository：继承Repository, 实现了CRUD相关的方法
+        save(entity)            save(entities)
+        findOne(id)             exists(id)
+        findAll()               delete(id)
+        delete(entity)          delete(entities)
+        deleteAll()
     PagingAndSortingRepository：继承CrudRepository, 实现了分页排序相关的方法
+        该接口包含分页和排序的功能
+        带排序的查询: findAll(Sort sort)
+        带排序的分页查询: findAll(Pageable pageable)
     JpaRepository：继承PagingAndSortingRepository, 实现JPA规范相关的方法
+        findAll()
+        findAll(Sort sort)
+        save(entities)
+        flush
+        deleteInBatch(entities)
 
+    JpaSpecificationExecutor: 独立的接口, 增加条件的
 
 spring data jpa、jpa规范、hibernate三者的关系:
 
